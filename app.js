@@ -1,94 +1,42 @@
-// app.js
+<!-- index.html -->
 
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
-require('dotenv').config();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages Display</title>
+</head>
+<body>
 
-const app = express();
-const port = process.env.PORT || 3000;
+  <div id="messages-container"></div>
 
-const graphqlQuery = `
-  query MessagesByUpdateAt {
-    messagesByUpdateAt(type: "message", sortDirection: DESC, limit: 2000) {
-      items {
-        id
-        message
-        channelId
-        createdAt
-        updatedAt
-        userMessagesId
-        type
-        author {
-          givenName
-          familyName
-          nickname
-          profileImage
-        }
+  <script>
+    // Function to fetch and display messages
+    async function fetchAndDisplayMessages() {
+      try {
+        // Make a request to your GraphQL endpoint
+        const response = await fetch('http://localhost:3000', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'text/html',
+          },
+        });
+
+        const data = await response.text();
+        
+        // Display messages on the web page
+        const messagesContainer = document.getElementById('messages-container');
+        messagesContainer.innerHTML = data;
+
+      } catch (error) {
+        console.error('Error fetching messages:', error);
       }
     }
-  }
-`;
 
-const headers = {
-  'x-api-key': process.env.API_KEY,
-  'Content-Type': 'application/json',
-};
+    // Call the function to fetch and display messages
+    fetchAndDisplayMessages();
+  </script>
 
-const config = {
-  headers: headers,
-  responseType: 'json',
-};
-
-app.use(cors());
-
-app.get('/', async (req, res) => {
-  try {
-    const response = await axios.post(
-      process.env.GRAPHQL_URL,
-      { query: graphqlQuery },
-      config
-    );
-
-    console.log('GraphQL Response:', response.data);
-
-    const messages = response.data.data.messagesByUpdateAt.items;
-
-    const messagesHTML = messages.map(message => {
-      const author = message.author || {}; // Handle null author
-
-      const createdAt = new Date(message.createdAt).toLocaleString('en-US', {
-        timeZone: 'Asia/Jakarta',
-      });
-
-      return `
-        <p>
-          <strong>${author.givenName || 'Unknown'}:</strong> 
-          ${message.message} - Created at: ${createdAt}
-        </p>
-      `;
-    }).join('');
-
-    res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Messages</title>
-      </head>
-      <body>
-        <h1>Messages</h1>
-        ${messagesHTML}
-      </body>
-      </html>
-    `);
-  } catch (error) {
-    console.error('Error fetching data:', error.message);
-    res.status(500).send('Error fetching data');
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+</body>
+</html>
