@@ -1,9 +1,22 @@
 {
-  "type": "commonjs",
+  "name": "thinkaboutzuu",
+  "version": "1.0.0",
+  "description": "jkt48",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
-    "axios": "^0.24.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.1",
-    "express": "^4.18.2"
-  }
+    "express": "^4.17.1"
+  },
+  "engines": {
+    "node": "14.x"  // Add this if you want to specify a Node.js version
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrxnexsus/thinkaboutzuu.git"  // Add your repository URL
+  },
+  "keywords": ["express", "node", "web application"],  // Add relevant keywords
+  "author": "mrxnexsus",
+  "license": "MIT"
 }
